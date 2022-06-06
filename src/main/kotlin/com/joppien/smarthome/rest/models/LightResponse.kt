@@ -28,15 +28,12 @@ data class LightResponse(
 }
 
 data class LightColor(
-    @SerializedName("gamut_type")
-    val gamutType: Char,
     @SerializedName("xy")
     val generalXYValues: LightColorXY,
     @SerializedName("gamut")
     val gamut: LightColorGamut?
 ) {
     constructor(hueLightColor: HueLightColor) : this(
-        gamutType = hueLightColor.gamutType,
         generalXYValues = LightColorXY(hueLightColor.generalXYValues),
         gamut = hueLightColor.gamut?.let { LightColorGamut(it) }
     )

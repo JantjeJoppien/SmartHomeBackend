@@ -2,6 +2,11 @@ package com.joppien.smarthome.data.retrofit.models
 
 import com.google.gson.annotations.SerializedName
 
+data class HueLightListResponse(
+    @SerializedName("data")
+    var hueLightList: List<HueLightResponse>
+)
+
 data class HueLightResponse(
     @SerializedName("id")
     val id: String,
@@ -31,8 +36,6 @@ data class HueLightDimmingState(
 )
 
 data class HueLightColor(
-    @SerializedName("gamut_type")
-    val gamutType: Char,
     @SerializedName("xy")
     val generalXYValues: HueLightColorXY,
     @SerializedName("gamut")
