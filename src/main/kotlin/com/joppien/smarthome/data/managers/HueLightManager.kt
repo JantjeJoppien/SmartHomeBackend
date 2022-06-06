@@ -1,16 +1,21 @@
 package com.joppien.smarthome.data.managers
 
+import com.joppien.smarthome.data.repositories.LightRepository
 import com.joppien.smarthome.data.retrofit.PhilipsHueService
 import com.joppien.smarthome.data.utils.Bridge
 import com.joppien.smarthome.rest.models.LightResponse
 import okhttp3.OkHttpClient
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Component
 class HueLightManager {
+
+    @Autowired
+    private lateinit var lightRepository: LightRepository
 
     val bridge: Bridge by lazy { Bridge.initBridge() }
 
