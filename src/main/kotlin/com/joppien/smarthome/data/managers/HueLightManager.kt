@@ -2,7 +2,9 @@ package com.joppien.smarthome.data.managers
 
 import com.joppien.smarthome.data.retrofit.PhilipsHueService
 import com.joppien.smarthome.data.utils.Bridge
+import com.joppien.smarthome.rest.models.LightResponse
 import okhttp3.OkHttpClient
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import retrofit2.Retrofit
@@ -14,6 +16,10 @@ class HueLightManager {
     @Autowired
     lateinit var bridge: Bridge
 
+    private val logger by lazy {
+        LoggerFactory.getLogger(HueLightManager::class.java)
+    }
+
     val service: PhilipsHueService by lazy {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://${bridge.ipAddress}")
@@ -24,9 +30,14 @@ class HueLightManager {
         retrofit.create(PhilipsHueService::class.java)
     }
 
-    fun getLightList(): List<String> {
+    fun getLightList(): List<LightResponse> {
         val result = service.getLightList().execute()
-
+        return if (result.isSuccessful) {
+            result.body()?.map { LightResponse(it) } ?: emptyList()
+        } else {
+            logger.error("Error while retrieving light list")
+            emptyList()
+        }
     }
 
 }

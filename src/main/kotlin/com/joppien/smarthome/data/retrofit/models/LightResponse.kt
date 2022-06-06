@@ -35,8 +35,8 @@ data class HueLightColor(
     val gamutType: Char,
     @SerializedName("xy")
     val generalXYValues: HueLightColorXY,
-    @SerializedName("gamut_type")
-    val gamut: HueLightColorGamut,
+    @SerializedName("gamut")
+    val gamut: HueLightColorGamut?,
 )
 
 data class HueLightColorGamut(

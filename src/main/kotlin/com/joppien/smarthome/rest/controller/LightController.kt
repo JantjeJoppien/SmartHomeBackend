@@ -14,5 +14,5 @@ class LightController {
     lateinit var lightService: LightService
 
     @GetMapping
-    fun getLightList() = lightService
+    fun getLightList() = lightService.getLightList()
 }
