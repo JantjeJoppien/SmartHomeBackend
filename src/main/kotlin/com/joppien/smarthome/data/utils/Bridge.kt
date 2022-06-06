@@ -4,13 +4,9 @@ import com.google.gson.annotations.SerializedName
 import com.joppien.smarthome.data.retrofit.PhilipsBridgeService
 import okhttp3.OkHttpClient
 import org.slf4j.LoggerFactory
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Scope
-import org.springframework.stereotype.Component
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.Retrofit
 
-@Component
 data class Bridge(
     @SerializedName("internalipaddress")
     var ipAddress: String
@@ -28,11 +24,8 @@ data class Bridge(
             while (errorCount < 3) {
                 try {
                     val result = performCall(service)
-                    when {
-                        result.isSuccessful -> {
-                            result.body()?.let { return it } ?: onCallError()
-                        }
-                    }
+                    if (result.isSuccessful && result.body() != null) return result.body()!!.first()
+                    else onCallError()
                 } catch (exception: Exception) {
                     onCallError(exception)
                 }
@@ -58,10 +51,4 @@ data class Bridge(
         }
     }
 
-}
-
-@Bean
-@Scope("singleton")
-fun bridgeSingleton(): Bridge {
-    return Bridge.initBridge()
 }

@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service
 class LightService {
 
     @Autowired
-    lateinit var lightManager: HueLightManager
+    lateinit var hueLightManager: HueLightManager
 
-    fun getLightList() = lightManager.getLightList()
+    fun getLightList() = hueLightManager.getLightList()
 
 }

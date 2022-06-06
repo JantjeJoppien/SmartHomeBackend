@@ -5,7 +5,6 @@ import com.joppien.smarthome.data.utils.Bridge
 import com.joppien.smarthome.rest.models.LightResponse
 import okhttp3.OkHttpClient
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -13,12 +12,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Component
 class HueLightManager {
 
-    @Autowired
-    lateinit var bridge: Bridge
+    val bridge: Bridge by lazy { Bridge.initBridge() }
 
-    private val logger by lazy {
-        LoggerFactory.getLogger(HueLightManager::class.java)
-    }
+    private val logger by lazy { LoggerFactory.getLogger(HueLightManager::class.java) }
 
     val service: PhilipsHueService by lazy {
         val retrofit = Retrofit.Builder()
@@ -26,7 +22,6 @@ class HueLightManager {
             .addConverterFactory(GsonConverterFactory.create())
             .client(OkHttpClient.Builder().build())
             .build()
-
         retrofit.create(PhilipsHueService::class.java)
     }
 
