@@ -1,5 +1,6 @@
 package com.joppien.smarthome.rest.service
 
+import com.joppien.smarthome.data.managers.HomeManager
 import com.joppien.smarthome.data.managers.HueLightManager
 import com.joppien.smarthome.data.managers.LightMetadataManager
 import com.joppien.smarthome.data.utils.DeviceType
@@ -24,16 +25,24 @@ class LightService {
     @Autowired
     lateinit var hueLightManager: HueLightManager
 
+    @Autowired
+    lateinit var homeManager: HomeManager
+
     fun getAllAvailableLightMetadata(): List<LightMetadataResponse> = hueLightManager.getAllLightMetadata()
 
     fun setLightMetadata(metadataList: List<LightMetadataRequest>) = lightMetadataManager.setLightMetaData(metadataList)
 
     fun getConfiguredLightList(): List<LightResponse> {
+        val configuredDeviceTypes = homeManager.getConfiguredDeviceTypeList()
+        if (configuredDeviceTypes.isEmpty()) return emptyList()
+
         val lightMetadata = lightMetadataManager.getAllLightMetadata()
         if (lightMetadata.isEmpty()) return emptyList()
 
         val resultList = mutableListOf<LightResponse>()
-        val hueList = lightMetadata.filter { it?.deviceType == DeviceType.PHILIPS_HUE.id }
+
+        val hueList = if (configuredDeviceTypes.contains(DeviceType.PHILIPS_HUE.id))
+            lightMetadata.filter { it?.deviceType == DeviceType.PHILIPS_HUE.id } else emptyList()
         when {
             hueList.isNotEmpty() -> {
                 val hueIds = hueList.map { it?.id }
