@@ -11,47 +11,47 @@ data class HueLightResponse(
     @SerializedName("id")
     val id: String,
     @SerializedName("metadata")
-    var hueLightMetadata: HueLightMetadata?,
+    var hueLightMetadata: HueLightResponseMetadata?,
     @SerializedName("on")
-    var hueLightState: HueLightState?,
+    var hueLightState: HueLightResponseState?,
     @SerializedName("dimming")
-    var hueLightDimmingState: HueLightDimmingState?,
+    var hueLightDimmingState: HueLightResponseDimmingState?,
     @SerializedName("color")
-    var hueLightColor: HueLightColor?
+    var hueLightColor: HueLightResponseColor?
 )
 
-data class HueLightMetadata(
+data class HueLightResponseMetadata(
     @SerializedName("name")
     var name: String
 )
 
-data class HueLightState(
+data class HueLightResponseState(
     @SerializedName("on")
     var lightOn: Boolean
 )
 
-data class HueLightDimmingState(
+data class HueLightResponseDimmingState(
     @SerializedName("brightness")
     var brightness: Float
 )
 
-data class HueLightColor(
+data class HueLightResponseColor(
     @SerializedName("xy")
-    val generalXYValues: HueLightColorXY,
+    val generalXYValues: HueLightResponseColorXY,
     @SerializedName("gamut")
-    val gamut: HueLightColorGamut?,
+    val gamut: HueLightResponseColorGamut?,
 )
 
-data class HueLightColorGamut(
+data class HueLightResponseColorGamut(
     @SerializedName("red")
-    val redXYValues: HueLightColorXY,
+    val redXYValues: HueLightResponseColorXY,
     @SerializedName("green")
-    val greenXYValues: HueLightColorXY,
+    val greenXYValues: HueLightResponseColorXY,
     @SerializedName("blue")
-    val blueXYValues: HueLightColorXY,
+    val blueXYValues: HueLightResponseColorXY,
 )
 
-data class HueLightColorXY(
+data class HueLightResponseColorXY(
     @SerializedName("x")
     val xValue: Float,
     @SerializedName("y")

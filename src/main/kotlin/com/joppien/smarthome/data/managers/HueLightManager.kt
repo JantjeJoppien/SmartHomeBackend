@@ -1,15 +1,28 @@
 package com.joppien.smarthome.data.managers
 
 import com.joppien.smarthome.data.repositories.LightRepository
+import com.joppien.smarthome.data.repositories.models.LightModel
 import com.joppien.smarthome.data.retrofit.PhilipsHueService
+import com.joppien.smarthome.data.retrofit.models.HueLightRequest
 import com.joppien.smarthome.data.utils.Bridge
+import com.joppien.smarthome.data.utils.DeviceType
+import com.joppien.smarthome.rest.models.LightMetadataRequest
+import com.joppien.smarthome.rest.models.LightMetadataResponse
+import com.joppien.smarthome.rest.models.LightRequest
 import com.joppien.smarthome.rest.models.LightResponse
 import okhttp3.Interceptor
+import okhttp3.MediaType
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.web.server.ResponseStatusException
+import retrofit2.HttpException
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.security.KeyStore
@@ -38,20 +51,66 @@ class HueLightManager {
 
     val service: PhilipsHueService by lazy {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://${bridge.ipAddress}")
+            .baseUrl("https://192.168.178.57/clip/v2/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(getUnsafeOkHttpClient())
             .build()
         retrofit.create(PhilipsHueService::class.java)
     }
 
-    fun getLightList(): List<LightResponse> {
+    fun getAllLightMetadata(): List<LightMetadataResponse> {
         val result = service.getLightList().execute()
         return if (result.isSuccessful) {
-            result.body()?.hueLightList?.map { LightResponse(it) } ?: emptyList()
+            result.body()?.hueLightList?.map { LightMetadataResponse(it) } ?: emptyList()
         } else {
             logger.error("Error while retrieving light list")
             emptyList()
+        }
+    }
+
+    fun getLightList(): List<LightResponse> {
+        val result = service.getLightList().execute()
+        val lightMetadata = lightRepository.findAll()
+        return if (result.isSuccessful) {
+            val lightResponseList = result.body()?.hueLightList?.map { LightResponse(it) } ?: emptyList()
+            // Only return data of configured devices
+            lightResponseList.filter { response -> lightMetadata.any { response.id == it?.interfaceId } }
+        } else {
+            logger.error("Error while retrieving light list")
+            emptyList()
+        }
+    }
+
+    fun getLightData(id: String): LightResponse {
+        val result = service.getLight(id).execute()
+        return if (result.isSuccessful) {
+            result.body()?.let { LightResponse(it) } ?: throw ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Device not available"
+            )
+        } else {
+            logger.error("Error while retrieving light data")
+            throw ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Device not available"
+            )
+        }
+    }
+
+    fun setLightMetaData(lightMetadataRequest: LightMetadataRequest) {
+        lightRepository.save(LightModel(lightMetadataRequest))
+    }
+
+    fun setLightData(lightRequest: LightRequest) {
+        when (lightRequest.deviceType) {
+            DeviceType.PHILIPS_HUE.id -> service.updateLight(lightRequest.id, HueLightRequest(lightRequest))
+            else -> {
+                logger.error("Error while setting light data")
+                throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Device not available"
+                )
+            }
         }
     }
 
