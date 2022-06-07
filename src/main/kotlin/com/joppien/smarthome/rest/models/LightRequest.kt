@@ -18,8 +18,6 @@ data class LightMetadataRequest(
 )
 
 data class LightRequest(
-    @SerializedName("id")
-    val id: String,
     @SerializedName("deviceType")
     val deviceType: Int,
     @SerializedName("state")

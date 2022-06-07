@@ -1,28 +1,19 @@
 package com.joppien.smarthome.data.managers
 
-import com.joppien.smarthome.data.repositories.LightRepository
-import com.joppien.smarthome.data.repositories.models.LightModel
 import com.joppien.smarthome.data.retrofit.PhilipsHueService
 import com.joppien.smarthome.data.retrofit.models.HueLightRequest
 import com.joppien.smarthome.data.utils.Bridge
 import com.joppien.smarthome.data.utils.DeviceType
-import com.joppien.smarthome.rest.models.LightMetadataRequest
 import com.joppien.smarthome.rest.models.LightMetadataResponse
 import com.joppien.smarthome.rest.models.LightRequest
 import com.joppien.smarthome.rest.models.LightResponse
 import okhttp3.Interceptor
-import okhttp3.MediaType
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ResponseStatusException
-import retrofit2.HttpException
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.security.KeyStore
@@ -41,9 +32,6 @@ class HueLightManager {
 
     @Value("\${secrets.hue}")
     lateinit var requestHeaderValue: String
-
-    @Autowired
-    private lateinit var lightRepository: LightRepository
 
     val bridge: Bridge by lazy { Bridge.initBridge() }
 
@@ -68,13 +56,12 @@ class HueLightManager {
         }
     }
 
-    fun getLightList(): List<LightResponse> {
+    fun getLightList(idList: List<String?>): List<LightResponse> {
         val result = service.getLightList().execute()
-        val lightMetadata = lightRepository.findAll()
         return if (result.isSuccessful) {
             val lightResponseList = result.body()?.hueLightList?.map { LightResponse(it) } ?: emptyList()
             // Only return data of configured devices
-            lightResponseList.filter { response -> lightMetadata.any { response.id == it?.interfaceId } }
+            lightResponseList.filter { response -> idList.any { response.id == it } }
         } else {
             logger.error("Error while retrieving light list")
             emptyList()
@@ -97,13 +84,9 @@ class HueLightManager {
         }
     }
 
-    fun setLightMetaData(lightMetadataRequest: LightMetadataRequest) {
-        lightRepository.save(LightModel(lightMetadataRequest))
-    }
-
-    fun setLightData(lightRequest: LightRequest) {
+    fun setLightData(id: String, lightRequest: LightRequest) {
         when (lightRequest.deviceType) {
-            DeviceType.PHILIPS_HUE.id -> service.updateLight(lightRequest.id, HueLightRequest(lightRequest))
+            DeviceType.PHILIPS_HUE.id -> service.updateLight(id, HueLightRequest(lightRequest))
             else -> {
                 logger.error("Error while setting light data")
                 throw ResponseStatusException(
