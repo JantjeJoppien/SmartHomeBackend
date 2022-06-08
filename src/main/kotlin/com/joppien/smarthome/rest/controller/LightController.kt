@@ -26,7 +26,7 @@ class LightController {
     @GetMapping("/{id}")
     fun getLight(@PathVariable id: String) = lightService.getLightData(id)
 
-    @GetMapping("/{id}")
-    fun getLight(@PathVariable id: String, @Body lightRequest: LightRequest) =
+    @PutMapping("/{id}")
+    fun setLight(@PathVariable id: String, @Body lightRequest: LightRequest) =
         lightService.setLightData(id, lightRequest)
 }
