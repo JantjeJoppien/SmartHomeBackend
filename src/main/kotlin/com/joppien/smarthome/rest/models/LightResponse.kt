@@ -8,24 +8,18 @@ import java.util.*
 data class LightMetadataResponse(
     @SerializedName("id")
     val id: String,
-    @SerializedName("interfaceId")
-    var interfaceId: String?,
     @SerializedName("internalName")
     var internalName: String?,
     @SerializedName("customName")
     var customName: String?,
     @SerializedName("roomName")
-    var roomName: String?,
-    @SerializedName("deviceType")
-    val deviceType: Int
+    var roomName: String?
 ) {
     constructor(hueLightResponse: HueLightResponse) : this(
         id = UUID.randomUUID().toString(),
-        interfaceId = hueLightResponse.id,
         internalName = hueLightResponse.hueLightMetadata?.name,
         customName = null,
-        roomName = null,
-        deviceType = DeviceType.PHILIPS_HUE.id
+        roomName = null
     )
 }
 

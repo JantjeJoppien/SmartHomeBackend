@@ -17,6 +17,6 @@ class HomeController {
     lateinit var homeService: HomeService
 
     @PutMapping
-    fun setLightList(@Body homeRequest: HomeRequest) = homeService.setConfiguredDeviceTypes(homeRequest)
+    fun setDeviceTypes(@Body homeRequest: HomeRequest) = homeService.setConfiguredDeviceTypes(homeRequest)
 
 }
