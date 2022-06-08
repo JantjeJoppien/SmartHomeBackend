@@ -9,7 +9,7 @@ data class HomeModel(
     @Id
     // We always use the same Id because currently we can only have 1 home configured at the time
     val id: Int = 1,
-    var deviceTypeList: List<Int> = emptyList()
+    var philipsHueEnabled: Boolean = false
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -23,6 +23,6 @@ data class HomeModel(
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , deviceTypeList = $deviceTypeList )"
+        return this::class.simpleName + "(id = $id , deviceTypeList = $philipsHueEnabled )"
     }
 }

@@ -13,14 +13,15 @@ class HomeManager {
     @Autowired
     private lateinit var homeRepository: HomeRepository
 
-    fun getConfiguredDeviceTypeList(): List<Int> = homeRepository.findAll().first()?.deviceTypeList ?: emptyList()
+    fun getConfiguredDeviceTypeList(): List<Int> =
+        getDeviceTypeListFromHomeModel(homeRepository.findAll().first())
 
     fun setConfiguredDeviceTypeList(homeRequest: HomeRequest) =
-        homeRepository.save(HomeModel(deviceTypeList = getDeviceTypeListFromHomeRequest(homeRequest)))
+        homeRepository.save(HomeModel(philipsHueEnabled = homeRequest.philipsHueEnabled))
 
-    private fun getDeviceTypeListFromHomeRequest(homeRequest: HomeRequest): List<Int> {
+    private fun getDeviceTypeListFromHomeModel(homeModel: HomeModel?): List<Int> {
         val deviceTypeList = mutableListOf<Int>()
-        if (homeRequest.philipsHueEnabled) deviceTypeList.add(DeviceType.PHILIPS_HUE.id)
+        if (homeModel?.philipsHueEnabled == true) deviceTypeList.add(DeviceType.PHILIPS_HUE.id)
 
         return deviceTypeList
     }
