@@ -9,8 +9,8 @@ import java.util.*
 data class LightMetadataResponse(
     @SerializedName("id")
     val id: String,
-    @SerializedName("internalId")
-    val internalId: String,
+    @SerializedName("interfaceId")
+    val interfaceId: String,
     @SerializedName("internalName")
     var internalName: String?,
     @SerializedName("customName")
@@ -22,7 +22,7 @@ data class LightMetadataResponse(
 ) {
     constructor(hueLightResponse: HueLightResponse) : this(
         id = UUID.randomUUID().toString(),
-        internalId = hueLightResponse.id,
+        interfaceId = hueLightResponse.id,
         internalName = hueLightResponse.hueLightMetadata?.name,
         customName = null,
         roomName = null,
@@ -32,7 +32,7 @@ data class LightMetadataResponse(
 
 data class LightResponse(
     @SerializedName("id")
-    val id: String,
+    var id: String?,
     @SerializedName("internalName")
     var internalName: String?,
     @SerializedName("customName")
@@ -49,7 +49,7 @@ data class LightResponse(
     val deviceType: Int
 ) {
     constructor(hueLightResponse: HueLightResponse) : this(
-        id = hueLightResponse.id,
+        id = null,
         internalName = hueLightResponse.hueLightMetadata?.name,
         customName = null,
         roomName = null,
@@ -60,6 +60,7 @@ data class LightResponse(
     )
 
     fun setFromMetadata(lightModel : LightModel) {
+        id = lightModel.id
         customName = lightModel.customName
         roomName = lightModel.roomName
     }
