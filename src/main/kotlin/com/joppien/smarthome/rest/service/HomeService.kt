@@ -11,6 +11,8 @@ class HomeService {
     @Autowired
     lateinit var homeManager: HomeManager
 
+    fun getConfiguredDeviceTypes(): HomeRequest = homeManager.getConfiguredDeviceType()
+
     fun setConfiguredDeviceTypes(homeRequest: HomeRequest) = homeManager.setConfiguredDeviceTypeList(homeRequest)
 
 }
