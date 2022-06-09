@@ -5,7 +5,6 @@ import com.joppien.smarthome.rest.models.LightRequest
 import com.joppien.smarthome.rest.service.LightService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import retrofit2.http.Body
 
 @RestController
 @RequestMapping("/v1/light")
@@ -18,7 +17,7 @@ class LightController {
     fun getLightList() = lightService.getAllAvailableLightMetadata()
 
     @PutMapping("/configure")
-    fun setLightList(@Body metadataList: List<LightMetadataRequest>) = lightService.setLightMetadata(metadataList)
+    fun setLightList(@RequestBody metadataList: List<LightMetadataRequest>) = lightService.setLightMetadata(metadataList)
 
     @GetMapping
     fun getConfiguredLightList() = lightService.getConfiguredLightList()
@@ -27,6 +26,6 @@ class LightController {
     fun getLight(@PathVariable id: String) = lightService.getLightData(id)
 
     @PutMapping("/{id}")
-    fun setLight(@PathVariable id: String, @Body lightRequest: LightRequest) =
+    fun setLight(@PathVariable id: String, @RequestBody lightRequest: LightRequest) =
         lightService.setLightData(id, lightRequest)
 }
