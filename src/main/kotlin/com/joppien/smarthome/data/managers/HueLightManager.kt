@@ -39,7 +39,7 @@ class HueLightManager {
 
     val service: PhilipsHueService by lazy {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://192.168.178.57/clip/v2/")
+            .baseUrl("https://192.168.188.21/clip/v2/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(getUnsafeOkHttpClient())
             .build()
