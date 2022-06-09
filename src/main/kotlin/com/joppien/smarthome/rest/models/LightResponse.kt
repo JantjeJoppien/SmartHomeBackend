@@ -1,6 +1,7 @@
 package com.joppien.smarthome.rest.models
 
 import com.google.gson.annotations.SerializedName
+import com.joppien.smarthome.data.repositories.models.LightModel
 import com.joppien.smarthome.data.retrofit.models.*
 import com.joppien.smarthome.data.utils.DeviceType
 import java.util.*
@@ -26,8 +27,12 @@ data class LightMetadataResponse(
 data class LightResponse(
     @SerializedName("id")
     val id: String,
-    @SerializedName("name")
-    var name: String?,
+    @SerializedName("internalName")
+    var internalName: String?,
+    @SerializedName("customName")
+    var customName: String?,
+    @SerializedName("roomName")
+    var roomName: String?,
     @SerializedName("state")
     var lightState: Boolean,
     @SerializedName("brightness")
@@ -39,12 +44,19 @@ data class LightResponse(
 ) {
     constructor(hueLightResponse: HueLightResponse) : this(
         id = hueLightResponse.id,
-        name = hueLightResponse.hueLightMetadata?.name,
+        internalName = hueLightResponse.hueLightMetadata?.name,
+        customName = null,
+        roomName = null,
         lightState = hueLightResponse.hueLightState?.lightOn ?: false,
         brightness = hueLightResponse.hueLightDimmingState?.brightness,
         lightColor = hueLightResponse.hueLightColor?.let { LightColor(it) },
         deviceType = DeviceType.PHILIPS_HUE.id
     )
+
+    fun setFromMetadata(lightModel : LightModel) {
+        customName = lightModel.customName
+        roomName = lightModel.roomName
+    }
 }
 
 data class LightColor(

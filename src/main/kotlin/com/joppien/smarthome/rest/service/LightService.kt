@@ -49,6 +49,11 @@ class LightService {
                 resultList.addAll(hueLightManager.getLightList(hueIds))
             }
         }
+        resultList.map { result ->
+            result.apply {
+                lightMetadata.find { it?.id == result.id }?.let { setFromMetadata(it) }
+            }
+        }
         return resultList
     }
 
