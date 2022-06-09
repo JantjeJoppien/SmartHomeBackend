@@ -19,6 +19,9 @@ class LightController {
     @PutMapping("/configure")
     fun setLightList(@RequestBody metadataList: List<LightMetadataRequest>) = lightService.setLightMetadata(metadataList)
 
+    @DeleteMapping("/configure")
+    fun clearLightList() = lightService.clearLightMetadata()
+
     @GetMapping
     fun getConfiguredLightList() = lightService.getConfiguredLightList()
 

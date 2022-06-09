@@ -24,4 +24,6 @@ class LightMetadataManager {
         lightRepository.save(LightModel(it))
     }
 
+    fun clearLightData() = lightRepository.deleteAll()
+
 }

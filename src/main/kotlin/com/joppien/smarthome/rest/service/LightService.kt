@@ -32,6 +32,8 @@ class LightService {
 
     fun setLightMetadata(metadataList: List<LightMetadataRequest>) = lightMetadataManager.setLightMetaData(metadataList)
 
+    fun clearLightMetadata() = lightMetadataManager.clearLightData()
+
     fun getConfiguredLightList(): List<LightResponse> {
         val configuredDeviceTypes = homeManager.getConfiguredDeviceTypeList()
         if (configuredDeviceTypes.isEmpty()) return emptyList()
