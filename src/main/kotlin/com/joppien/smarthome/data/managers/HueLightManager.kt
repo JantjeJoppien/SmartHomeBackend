@@ -61,7 +61,7 @@ class HueLightManager {
         return if (result.isSuccessful) {
             val lightResponseList = result.body()?.hueLightList?.map { LightResponse(it) } ?: emptyList()
             // Only return data of configured devices
-            lightResponseList.filter { response -> idList.any { response.id == it } }
+            lightResponseList.filter { response -> idList.any { response.interfaceId == it } }
         } else {
             logger.error("Error while retrieving light list")
             emptyList()
@@ -71,7 +71,7 @@ class HueLightManager {
     fun getLightData(id: String): LightResponse {
         val result = service.getLight(id).execute()
         return if (result.isSuccessful) {
-            result.body()?.let { LightResponse(it) } ?: throw ResponseStatusException(
+            result.body()?.let { LightResponse(it.hueLightList.first()) } ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "Device not available"
             )
@@ -85,15 +85,13 @@ class HueLightManager {
     }
 
     fun setLightData(id: String, lightRequest: LightRequest) {
-        when (lightRequest.deviceType) {
-            DeviceType.PHILIPS_HUE.id -> service.updateLight(id, HueLightRequest(lightRequest))
-            else -> {
-                logger.error("Error while setting light data")
-                throw ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Device not available"
-                )
-            }
+        val request = service.updateLight(id, HueLightRequest(lightRequest)).execute()
+        if (!request.isSuccessful) {
+            logger.error("Error while setting light data")
+            throw ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Device not available"
+            )
         }
     }
 

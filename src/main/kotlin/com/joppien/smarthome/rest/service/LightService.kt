@@ -53,7 +53,7 @@ class LightService {
         }
         resultList.map { result ->
             result.apply {
-                lightMetadata.find { it?.id == result.id }?.let { setFromMetadata(it) }
+                lightMetadata.find { it?.interfaceId == result.interfaceId }?.let { setFromMetadata(it) }
             }
         }
         return resultList
@@ -63,15 +63,19 @@ class LightService {
         val metadata = lightMetadataManager.getLightData(id)
         if (metadata != null) {
             return when (metadata.deviceType) {
-                DeviceType.PHILIPS_HUE.id -> hueLightManager.getLightData(id)
+                DeviceType.PHILIPS_HUE.id -> hueLightManager.getLightData(
+                    metadata.interfaceId ?: throw onLightNotFound(id)
+                )
                 else -> throw onLightNotFound(id)
             }
         } else throw onLightNotFound(id)
     }
 
     fun setLightData(id: String, lightRequest: LightRequest) {
-        when (lightRequest.deviceType) {
-            DeviceType.PHILIPS_HUE.id -> hueLightManager.setLightData(id, lightRequest)
+        val metadata = lightMetadataManager.getLightData(id)
+        when (metadata?.deviceType) {
+            DeviceType.PHILIPS_HUE.id -> metadata.interfaceId?.let { hueLightManager.setLightData(it, lightRequest) }
+                ?: throw onLightNotFound(id)
             else -> throw onLightNotFound(id)
         }
     }

@@ -33,6 +33,8 @@ data class LightMetadataResponse(
 data class LightResponse(
     @SerializedName("id")
     var id: String?,
+    @SerializedName("interfaceId")
+    val interfaceId: String,
     @SerializedName("internalName")
     var internalName: String?,
     @SerializedName("customName")
@@ -50,6 +52,7 @@ data class LightResponse(
 ) {
     constructor(hueLightResponse: HueLightResponse) : this(
         id = null,
+        interfaceId = hueLightResponse.id,
         internalName = hueLightResponse.hueLightMetadata?.name,
         customName = null,
         roomName = null,

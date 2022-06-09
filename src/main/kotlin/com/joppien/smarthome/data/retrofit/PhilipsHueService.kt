@@ -8,13 +8,13 @@ import retrofit2.http.*
 
 interface PhilipsHueService {
 
-    @GET("./resource/light")
+    @GET("resource/light")
     fun getLightList(): Call<HueLightListResponse>
 
-    @GET("./resource/light/{id}")
-    fun getLight(@Path("id") id: String): Call<HueLightResponse>
+    @GET("resource/light/{id}")
+    fun getLight(@Path("id") id: String): Call<HueLightListResponse>
 
-    @PUT("./resource/light/{id}")
-    fun updateLight(@Path("id") id: String, @Body hueLightRequest: HueLightRequest)
+    @PUT("resource/light/{id}")
+    fun updateLight(@Path("id") id: String, @Body hueLightRequest: HueLightRequest): Call<Unit>
 
 }

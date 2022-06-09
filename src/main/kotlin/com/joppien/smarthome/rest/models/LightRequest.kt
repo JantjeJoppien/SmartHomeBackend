@@ -18,8 +18,6 @@ data class LightMetadataRequest(
 )
 
 data class LightRequest(
-    @SerializedName("deviceType")
-    val deviceType: Int,
     @SerializedName("state")
     var lightState: Boolean,
     @SerializedName("brightness")
