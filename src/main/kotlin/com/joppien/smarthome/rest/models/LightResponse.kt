@@ -14,13 +14,16 @@ data class LightMetadataResponse(
     @SerializedName("customName")
     var customName: String?,
     @SerializedName("roomName")
-    var roomName: String?
+    var roomName: String?,
+    @SerializedName("deviceType")
+    val deviceType: Int
 ) {
     constructor(hueLightResponse: HueLightResponse) : this(
         id = UUID.randomUUID().toString(),
         internalName = hueLightResponse.hueLightMetadata?.name,
         customName = null,
-        roomName = null
+        roomName = null,
+        deviceType = DeviceType.PHILIPS_HUE.id
     )
 }
 

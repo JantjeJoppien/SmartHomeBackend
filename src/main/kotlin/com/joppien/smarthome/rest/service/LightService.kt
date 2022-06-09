@@ -47,7 +47,7 @@ class LightService {
             lightMetadata.filter { it?.deviceType == DeviceType.PHILIPS_HUE.id } else emptyList()
         when {
             hueList.isNotEmpty() -> {
-                val hueIds = hueList.map { it?.id }
+                val hueIds = hueList.map { it?.interfaceId }
                 resultList.addAll(hueLightManager.getLightList(hueIds))
             }
         }
